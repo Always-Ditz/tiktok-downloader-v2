@@ -1,63 +1,54 @@
 export default async function handler(req, res) {
-  // CORS Headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { url, action, downloadUrl, type } = req.query;
 
-  // LOGIC PROXY DOWNLOAD (Streaming)
+  // --- LOGIC PROXY STREAMING KAMU ---
   if (action === 'proxy' && downloadUrl) {
     try {
       const response = await fetch(downloadUrl);
-      if (!response.ok) throw new Error('Failed to fetch media');
+      if (!response.ok) throw new Error('Failed to fetch file');
 
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type') || 'application/octet-stream';
       const contentLength = response.headers.get('content-length');
-
-      // Penamaan file otomatis
-      const randomId = Math.floor(1000 + Math.random() * 9000);
-      const extension = type === 'image' ? 'jpg' : 'mp4';
-      const fileName = `tikdown_${randomId}.${extension}`;
-
-      res.setHeader('Content-Type', contentType || (type === 'image' ? 'image/jpeg' : 'video/mp4'));
-      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       
+      // Penamaan file otomatis
+      const ext = type === 'image' ? 'jpg' : 'mp4';
+      const fileName = `tikdown_${Math.floor(1000 + Math.random() * 9000)}.${ext}`;
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.setHeader('Cache-Control', 'no-cache');
       if (contentLength) res.setHeader('Content-Length', contentLength);
 
-      // Streaming data ke browser
+      // STREAMING LANGSUNG (Tanpa nunggu buffer)
       const reader = response.body.getReader();
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        res.write(value);
+        res.write(value); // Kirim potongan data langsung ke user
       }
       return res.end();
-    } catch (e) {
-      return res.status(500).send("Error streaming file");
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
     }
   }
 
-  // LOGIC AMBIL DATA DARI TIKWM
-  if (!url) return res.status(400).json({ error: "URL wajib diisi" });
-
+  // --- LOGIC METADATA TIKWM ---
+  if (!url) return res.status(400).json({ error: 'URL is required' });
   try {
     const params = new URLSearchParams({ url, hd: "1" });
-    const response = await fetch("https://www.tikwm.com/api/", {
+    const tikRes = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params
     });
-
-    const json = await response.json();
-    if (json.code !== 0) return res.status(500).json({ error: "Gagal ambil data" });
-
+    const json = await tikRes.json();
     return res.status(200).json(json.data);
-  } catch (error) {
-    return res.status(500).json({ error: "Server Error", details: error.message });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
   }
-}
-  
+      }

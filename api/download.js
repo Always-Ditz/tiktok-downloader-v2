@@ -11,14 +11,29 @@ export default async function handler(req, res) {
   if (action === 'proxy' && downloadUrl) {
     try {
       const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error('Failed to fetch video');
+
       const contentType = response.headers.get('content-type');
-      const buffer = await response.arrayBuffer();
+      const contentLength = response.headers.get('content-length');
+
+      // Membuat angka acak 4 digit
+      const randomId = Math.floor(1000 + Math.random() * 9000);
+      const fileName = `tikdown_${randomId}.mp4`;
 
       res.setHeader('Content-Type', contentType || 'video/mp4');
-      res.setHeader('Content-Disposition', 'attachment; filename="tiktok_video.mp4"');
-      return res.send(Buffer.from(buffer));
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      
+      if (contentLength) res.setHeader('Content-Length', contentLength);
+
+      const reader = response.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        res.write(value);
+      }
+      return res.end();
     } catch (e) {
-      return res.status(500).send("Error downloading file");
+      return res.status(500).send("Error streaming file");
     }
   }
 
@@ -36,7 +51,6 @@ export default async function handler(req, res) {
     if (json.code !== 0) return res.status(500).json({ error: "Gagal ambil data" });
 
     return res.status(200).json(json.data);
-
   } catch (error) {
     return res.status(500).json({ error: "Server Error", details: error.message });
   }

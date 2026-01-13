@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
@@ -6,25 +7,28 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { url, action, downloadUrl } = req.query;
+  const { url, action, downloadUrl, type } = req.query;
 
+  // LOGIC PROXY DOWNLOAD (Streaming)
   if (action === 'proxy' && downloadUrl) {
     try {
       const response = await fetch(downloadUrl);
-      if (!response.ok) throw new Error('Failed to fetch video');
+      if (!response.ok) throw new Error('Failed to fetch media');
 
       const contentType = response.headers.get('content-type');
       const contentLength = response.headers.get('content-length');
 
-      // Membuat angka acak 4 digit
+      // Penamaan file otomatis
       const randomId = Math.floor(1000 + Math.random() * 9000);
-      const fileName = `tikdown_${randomId}.mp4`;
+      const extension = type === 'image' ? 'jpg' : 'mp4';
+      const fileName = `tikdown_${randomId}.${extension}`;
 
-      res.setHeader('Content-Type', contentType || 'video/mp4');
+      res.setHeader('Content-Type', contentType || (type === 'image' ? 'image/jpeg' : 'video/mp4'));
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
       
       if (contentLength) res.setHeader('Content-Length', contentLength);
 
+      // Streaming data ke browser
       const reader = response.body.getReader();
       while (true) {
         const { done, value } = await reader.read();
@@ -37,6 +41,7 @@ export default async function handler(req, res) {
     }
   }
 
+  // LOGIC AMBIL DATA DARI TIKWM
   if (!url) return res.status(400).json({ error: "URL wajib diisi" });
 
   try {
@@ -55,3 +60,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Server Error", details: error.message });
   }
 }
+  

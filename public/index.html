@@ -20,56 +20,36 @@
 
         body {
             background-color: var(--bg-color);
-            /* Background Grid Pattern */
             background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 50px 50px;
-            
             color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            overflow-x: hidden; /* Mencegah scroll horizontal */
+            overflow-x: hidden;
         }
 
-        /* Container dengan Animasi Masuk */
+        /* Animasi Fade-in saat Web Dibuka */
         .container {
             width: 100%;
             max-width: 480px;
             position: relative;
             z-index: 10;
-            opacity: 0; /* Mulai dari transparan */
-            animation: fadeInPage 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; /* Animasi smooth */
+            opacity: 0;
+            animation: fadeInPage 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        /* Definisi Animasi Fade In */
         @keyframes fadeInPage {
-            0% { 
-                opacity: 0; 
-                transform: translateY(-30px) scale(0.95); 
-            }
-            100% { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
+            0% { opacity: 0; transform: translateY(-20px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Header Styles */
         .header { text-align: center; margin-bottom: 40px; }
-        
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-            color: #fff;
-            /* Sedikit efek glow pada text putih */
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
+        h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; color: #fff; }
         .desc { color: var(--text-muted); font-size: 0.9rem; }
 
         /* Input Area */
@@ -87,124 +67,78 @@
         .input-wrapper:focus-within {
             border-color: var(--primary);
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
         }
 
-        input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            flex: 1;
-            padding: 12px 16px;
-            outline: none;
-            font-size: 1rem;
-        }
-
-        input::placeholder { color: #555; transition: color 0.3s; }
-        input:focus::placeholder { color: #333; }
+        input { background: transparent; border: none; color: #fff; flex: 1; padding: 12px 16px; outline: none; font-size: 1rem; }
 
         button#actionBtn {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 0 24px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: var(--primary); color: #000; border: none;
+            padding: 0 24px; border-radius: 10px; font-weight: 700;
+            cursor: pointer; transition: transform 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
-
         button#actionBtn:hover { transform: scale(1.05); }
-        button#actionBtn:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
 
-        /* Spinner Animation */
-        .spinner {
-            width: 20px; height: 20px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top-color: #000;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: none;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Result Card */
+        /* Card Result */
         #result { margin-top: 30px; display: none; }
-        
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 20px;
-            overflow: hidden;
-            /* Animasi kartu muncul */
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Author Info */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
         .author-section { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
         .avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #333; }
         .meta h3 { font-size: 0.95rem; color: #fff; }
-        .meta p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+        .meta p { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* Media Display */
-        .media-box {
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            border: 1px solid #222;
-            position: relative;
+        /* Media */
+        .media-box { background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; border: 1px solid #222; }
+        video { width: 100%; display: block; max-height: 450px; }
+
+        /* Styles khusus Download Foto Slide */
+        .image-container { position: relative; width: 100%; background: #000; border-bottom: 1px solid #222; }
+        .image-container img { width: 100%; display: block; max-height: 450px; object-fit: contain; }
+        
+        .dl-icon-btn {
+            position: absolute; bottom: 12px; right: 12px;
+            background: var(--primary); color: #000;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: 0.2s;
         }
-        video, img { width: 100%; display: block; max-height: 450px; object-fit: contain; }
+        .dl-icon-btn:hover { transform: scale(1.1); }
 
-        /* Stats Bar */
         .stats-bar {
-            display: flex;
-            justify-content: space-between;
+            display: flex; justify-content: space-between;
             background: rgba(255,255,255,0.03);
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: #ccc;
-            border: 1px solid rgba(255,255,255,0.05);
+            padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;
+            font-size: 0.85rem; color: #ccc; border: 1px solid rgba(255,255,255,0.05);
         }
         .stat-item { display: flex; align-items: center; gap: 6px; }
         .stat-item i { font-size: 1.1rem; color: var(--primary); }
 
-        /* Download Buttons */
         .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        
         .btn-dl {
-            text-decoration: none;
-            padding: 14px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
+            text-decoration: none; padding: 14px; border-radius: 10px;
+            text-align: center; font-weight: 600; font-size: 0.95rem;
+            display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;
         }
-
-        .btn-primary { background: var(--primary); color: #000; border: none; }
-        .btn-primary:hover { box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
-        
+        .btn-primary { background: var(--primary); color: #000; }
         .btn-secondary { background: transparent; color: #fff; border: 1px solid #333; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: #666; }
 
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(40px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        .spinner {
+            width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: #000; border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: none;
         }
-        
-        .image-slider { overflow-x: hidden; overflow-y: scroll; max-height: 400px; scroll-behavior: smooth; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .image-slider { overflow-y: auto; max-height: 400px; }
     </style>
 </head>
 <body>
@@ -216,15 +150,14 @@
         </div>
 
         <div class="input-wrapper">
-            <input type="text" id="urlInput" placeholder="Tempel link TikTok di sini..." autocomplete="off">
+            <input type="text" id="urlInput" placeholder="Tempel link TikTok..." autocomplete="off">
             <button id="actionBtn" onclick="fetchData()">
                 <i class="ph-bold ph-arrow-right" id="btnIcon"></i>
                 <div class="spinner" id="btnSpinner"></div>
             </button>
         </div>
 
-        <div id="result">
-            </div>
+        <div id="result"></div>
     </div>
 
     <script>
@@ -236,30 +169,21 @@
             const spinner = document.getElementById('btnSpinner');
 
             const url = input.value.trim();
-            if (!url) {
-                input.focus();
-                return;
-            }
+            if (!url) return;
 
-            // Loading State
             btn.disabled = true;
             icon.style.display = 'none';
             spinner.style.display = 'block';
             resultDiv.style.display = 'none';
 
             try {
-                // Fetch Metadata dari Backend Vercel
                 const res = await fetch(`/api/download?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
-
-                if (data.error) throw new Error("Gagal mengambil data. Pastikan link benar.");
-
+                if (data.error) throw new Error(data.error);
                 renderUI(data);
-
             } catch (error) {
                 alert("Error: " + error.message);
             } finally {
-                // Reset State
                 btn.disabled = false;
                 icon.style.display = 'block';
                 spinner.style.display = 'none';
@@ -273,28 +197,40 @@
             let mediaHtml = '';
             let downloadBtns = '';
             
-            // Logic URL Proxy
+            // Logic URL Proxy Video
             const videoUrl = data.hdplay || data.play;
-            const proxyLink = `/api/download?action=proxy&downloadUrl=${encodeURIComponent(videoUrl)}`;
+            const videoProxy = `/api/download?action=proxy&type=video&downloadUrl=${encodeURIComponent(videoUrl)}`;
 
             if (data.images && data.images.length > 0) {
-                mediaHtml = `<div class="media-box image-slider">
-                    ${data.images.map(img => `<img src="${img}" style="margin-bottom:4px;">`).join('')}
-                </div>`;
+                // RENDER SLIDE FOTO
+                mediaHtml = `<div class="media-box image-slider">`;
+                data.images.forEach((img) => {
+                    const imgProxy = `/api/download?action=proxy&type=image&downloadUrl=${encodeURIComponent(img)}`;
+                    mediaHtml += `
+                        <div class="image-container">
+                            <img src="${img}">
+                            <a href="${imgProxy}" class="dl-icon-btn">
+                                <i class="ph-bold ph-download-simple"></i>
+                            </a>
+                        </div>`;
+                });
+                mediaHtml += `</div>`;
+                
                 downloadBtns = `
                     <a href="${data.music}" target="_blank" class="btn-dl btn-secondary">
-                        <i class="ph-bold ph-music-notes"></i> Download Musik
+                        <i class="ph-bold ph-music-notes"></i> Download Musik (MP3)
                     </a>
                 `;
             } else {
+                // RENDER VIDEO
                 mediaHtml = `<div class="media-box">
                     <video controls poster="${data.cover}" playsinline>
-                        <source src="${proxyLink}" type="video/mp4">
+                        <source src="${videoProxy}" type="video/mp4">
                     </video>
                 </div>`;
                 
                 downloadBtns = `
-                    <a href="${proxyLink}" class="btn-dl btn-primary">
+                    <a href="${videoProxy}" class="btn-dl btn-primary">
                         <i class="ph-bold ph-download-simple"></i> Download Video HD
                     </a>
                     <a href="${data.music}" target="_blank" class="btn-dl btn-secondary">
@@ -309,26 +245,20 @@
                         <img src="${data.author.avatar}" class="avatar">
                         <div class="meta">
                             <h3>@${data.author.unique_id}</h3>
-                            <p>${data.title ? data.title.substring(0, 60) + (data.title.length>60?'...':'') : 'Tanpa Caption'}</p>
+                            <p>${data.title ? data.title.substring(0, 60) + '...' : 'TikTok Content'}</p>
                         </div>
                     </div>
-
                     ${mediaHtml}
-
                     <div class="stats-bar">
-                        <div class="stat-item" title="Views"><i class="ph-fill ph-play"></i> ${formatNum(data.play_count)}</div>
-                        <div class="stat-item" title="Likes"><i class="ph-fill ph-heart"></i> ${formatNum(data.digg_count)}</div>
-                        <div class="stat-item" title="Comments"><i class="ph-fill ph-chat-circle-dots"></i> ${formatNum(data.comment_count)}</div>
+                        <div class="stat-item"><i class="ph-fill ph-play"></i> ${formatNum(data.play_count)}</div>
+                        <div class="stat-item"><i class="ph-fill ph-heart"></i> ${formatNum(data.digg_count)}</div>
+                        <div class="stat-item"><i class="ph-fill ph-chat-circle-dots"></i> ${formatNum(data.comment_count)}</div>
                     </div>
-
-                    <div class="btn-group">
-                        ${downloadBtns}
-                    </div>
-                </div>
-            `;
-
+                    <div class="btn-group">${downloadBtns}</div>
+                </div>`;
             resultDiv.style.display = 'block';
         }
     </script>
 </body>
-</html>
+    </html>
+                
